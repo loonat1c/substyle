@@ -12,13 +12,20 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:15px/
 body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(38% 38% at 18% 14%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 70%),radial-gradient(34% 34% at 86% 8%,color-mix(in srgb,var(--vy) 20%,transparent),transparent 70%),radial-gradient(44% 44% at 72% 96%,color-mix(in srgb,var(--accent2) 18%,transparent),transparent 70%);animation:drift 30s ease-in-out infinite alternate}
 @keyframes drift{to{transform:translate3d(4%,3%,0) scale(1.08)}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-header{position:sticky;top:0;height:68px;padding:0 1.25rem;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line);z-index:50}
+header{position:sticky;top:0;min-height:68px;padding:8px 1.25rem;flex-wrap:wrap;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line);z-index:50}
 h1{font:600 17px var(--font-display);letter-spacing:-.02em;margin:0;background:linear-gradient(100deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
 h2{font:500 12.5px var(--font-display);letter-spacing:-.01em;color:var(--text2);margin:0 0 16px}
 .w{max-width:1200px;margin:0 auto;padding:20px 1.25rem 48px}
 .sp{flex:1}.mu{color:var(--text3)}
 .pill{padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:var(--glass);color:var(--text2);font-size:13px}
 #toast::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:8px;box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
+.tm{position:relative;display:inline-flex;align-items:center;gap:8px;cursor:default;white-space:nowrap}
+.tm .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
+.tm.pk{border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.tm.pk .dot{background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+.tm b{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.tm::after{content:attr(data-tip);position:absolute;top:calc(100% + 10px);left:50%;transform:translate(-50%,-4px);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-size:12.5px;color:var(--text2);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s var(--ease);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
+.tm:hover::after{opacity:1;transform:translate(-50%,0)}
 nav{display:inline-flex;gap:4px;padding:5px;max-width:100%;overflow-x:auto;scrollbar-width:none;background:var(--glass);border:1px solid var(--line);border-radius:999px;margin-bottom:20px}
 nav button{padding:9px 20px;font:500 14px var(--font-body);border:0;border-radius:999px;background:transparent;color:var(--text3);box-shadow:none}
 nav button:hover{color:var(--text);transform:none;box-shadow:none}
@@ -41,6 +48,18 @@ button:active{transform:scale(.97)}
 button.sec{background:transparent;color:var(--text2);border:1px solid var(--line);font-weight:500;box-shadow:none}
 button.sec:hover{background:var(--surface2);color:var(--text);box-shadow:none}
 button:disabled{opacity:.5;transform:none;cursor:default}
+.act{background:var(--tint)!important;color:var(--text)!important;border-color:var(--accent)!important}
+.ib{width:42px;height:42px;padding:0;display:inline-grid;place-items:center;position:relative;margin-left:auto}
+.ib svg{width:20px;height:20px}
+.ib::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font:500 12.5px var(--font-body);color:var(--text2);white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .2s,transform .2s var(--ease);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
+.ib:hover::after{opacity:1;transform:none}
+#sdh.act{color:var(--accent2)!important}
+#src,#dst{min-height:clamp(420px,62vh,720px)}
+.ov{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ov[hidden]{display:none}
+.md{max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:1.6rem;box-shadow:0 40px 80px -20px rgba(0,0,0,.7);animation:paneIn .3s var(--ease)}
+.md p{color:var(--text2);margin:0 0 20px;line-height:1.6}
+.md .row{justify-content:flex-end}
 .bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:14px 0 6px}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .3s}
 table{width:100%;border-collapse:separate;border-spacing:0 6px;margin-top:10px}
@@ -50,10 +69,10 @@ td:first-child{border-left-width:1px;border-radius:var(--r-md) 0 0 var(--r-md)}
 td:last-child{border-right-width:1px;border-radius:0 var(--r-md) var(--r-md) 0}
 del{background:rgba(255,107,122,.25);text-decoration:none;border-radius:4px}
 ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
-@media(max-width:800px){.cols{grid-template-columns:1fr}header{height:60px;padding:0 .85rem}.w{padding:16px .85rem 40px}nav button{padding:9px 14px;font-size:13px}}
+@media(max-width:800px){.cols{grid-template-columns:1fr}header{min-height:60px;padding:8px .85rem}.w{padding:16px .85rem 40px}nav button{padding:9px 14px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head><body>
-<header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="sp"></span><span class="pill" id="toast">готов</span></header>
+<header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="pill tm" id="tm"><i class="dot"></i><span id="tml"></span><b id="tmt"></b></span><span class="sp"></span><span class="pill" id="toast">готов</span></header>
 <div class="w">
 <nav id="nav"><button data-p="t" class="on">Перевод</button><button data-p="e">Правки</button><button data-p="s">Проект и стиль</button><button data-p="c">Настройки</button></nav>
 
@@ -61,7 +80,7 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <div><label>Исходник (ASS, англ.)</label><textarea id="src" placeholder="Dialogue: 0,0:53:03.12,0:53:05.59,Default,,0,0,0,,Let's go on a date."></textarea></div>
 <div><label>Перевод</label><textarea id="dst"></textarea></div></div>
 <div class="bar"><i id="bar"></i></div>
-<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="80" style="width:80px"><span id="pt" class="mu"></span></div></div></section>
+<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="80" style="width:80px"><span id="pt" class="mu"></span><button class="sec ib" id="sdh" aria-pressed="false" aria-label="Убрать пометки для слабослышащих" data-tip="Убрать пометки для слабослышащих"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M17 10.2a2.2 2.2 0 1 0 0 3.6"/></svg></button></div></div></section>
 
 <section id="p_e" hidden><div class="card"><div class="cols">
 <div><label>Что отдал DeepSeek (подставляется автоматически)</label><textarea id="a"></textarea></div>
@@ -80,6 +99,7 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <label>URL базы bfnames (Realtime Database)</label><input id="c_db" value="https://bfnames-default-rtdb.europe-west1.firebasedatabase.app">
 <label>PIN-код bfnames (4 цифры)</label><input id="c_pin" type="password" inputmode="numeric" maxlength="4"></div></section>
 </div>
+<div class="ov" id="md" hidden><div class="md"><h2>Включено удаление пометок</h2><p>Кнопка «Убрать пометки для слабослышащих» нажата: строки вроде (вздыхает) и имена говорящих будут удалены из перевода. Так и должно быть?</p><div class="row"><button class="sec" id="md_off">Отключить</button><button id="md_go">Да, переводить</button></div></div></div>
 <script>
 const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const L=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -97,14 +117,38 @@ async function ai(messages,temp=.3){
  const pk=peak(),us=d.usage||{},h=us.prompt_cache_hit_tokens||0,m=us.prompt_cache_miss_tokens??((us.prompt_tokens||0)-h),u=L('use',{c:0});u.c=(u.c||0)+(h*(pk?0.006:0.003)+m*(pk?0.3:0.15)+(us.completion_tokens||0)*(pk?1.2:0.6))/1e6;u.h=(u.h||0)+h;u.t=(u.t||0)+(us.prompt_tokens||0);S('use',u);showUse();
  return d.choices[0].message.content;
 }
-const peak=()=>{const n=new Date(),d=n.getUTCDay(),h=n.getUTCHours();return d>0&&d<6&&((h>=1&&h<4)||(h>=6&&h<10))};
+const peak=()=>peakInfo().peak;
+function peakInfo(){
+ const n=Date.now(),d0=new Date(n);d0.setUTCHours(0,0,0,0);
+ for(let i=0;i<8;i++){
+  const day=d0.getTime()+i*864e5,w=new Date(day).getUTCDay();
+  if(w<1||w>5)continue;
+  for(const[a,b]of[[1,4],[6,10]]){
+   const st=day+a*36e5,en=day+b*36e5;
+   if(n>=st&&n<en)return{peak:true,t:en};
+   if(n<st)return{peak:false,t:st};
+  }
+ }
+}
+const DN=['вс','пн','вт','ср','чт','пт','сб'],z2=x=>String(x).padStart(2,'0');let lastPk;
+function tick(){
+ const i=peakInfo(),n=Date.now(),sec=Math.max(0,Math.floor((i.t-n)/1000));
+ const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60);
+ const tz=new Date(i.t+18e6),nw=new Date(n+18e6),same=tz.getUTCDate()===nw.getUTCDate()&&tz.getUTCMonth()===nw.getUTCMonth();
+ $('tml').textContent=i.peak?'До конца пика':'Пик через';
+ $('tmt').textContent=(d?d+'д ':'')+h+':'+z2(m)+':'+z2(sec%60);
+ $('tm').dataset.tip=(i.peak?'Пик закончится: ':'Пик начнётся: ')+(same?'':DN[tz.getUTCDay()]+' ')+z2(tz.getUTCHours())+':'+z2(tz.getUTCMinutes())+' (Ташкент)';
+ $('tm').classList.toggle('pk',i.peak);
+ if(lastPk!==i.peak){lastPk=i.peak;showUse()}
+}
+setInterval(tick,1000);tick();
 function showUse(){const u=L('use',{c:0});$('cost').textContent='≈ $'+(u.c||0).toFixed(3)+(peak()?' · пик':' · off-peak')+(u.t?' · кэш '+Math.round(100*(u.h||0)/u.t)+'%':'')}
 $('cost').onclick=()=>{S('use',{c:0});showUse()};
 
 // --- Перевод
 function sys(){
  const ex=pairs.slice(-20).map(p=>`БЫЛО: ${p.before}\nСТАЛО: ${p.after}`).join('\n\n');
- return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.
+ return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.${sdhOn()?'\n\nУбирай технические пометки для слабослышащих: звуки и действия в скобках, например (вздыхает), (кричит), (музыка), и имена говорящих перед репликой, например «ДЖОН:». Если после удаления в строке ничего не осталось, верни только «номер|» с пустым текстом. Диалоговые дефисы «- » сохраняй.':''}
 
 СТИЛЬ:
 ${$('guide').value.trim()||'(нет)'}
@@ -114,8 +158,26 @@ ${ex||'(нет)'}
 
 ПРОЕКТ (имена, термины, обращения — писать строго так):
 ${$('gloss').value.trim()||'(нет)'}`}
+const sdhOn=()=>$('sdh').classList.contains('act');
+const ask=()=>new Promise(r=>{const m=$('md');m.hidden=false;$('md_off').onclick=()=>{m.hidden=true;r('off')};$('md_go').onclick=()=>{m.hidden=true;r('go')}});
+const EL=/\s*(\.{3}|…)\s*$/,ES=/^((?:\{[^}]*\}\s*)*)(\.{3}|…)\s*/;
+function joinEllipsis(a){for(let i=0;i<a.length-1;i++)if(EL.test(a[i].text)&&ES.test(a[i+1].text)){a[i].text=a[i].text.replace(EL,'');a[i+1].text=a[i+1].text.replace(ES,'$1')}}
+const TG=/^\s*(\{[^}]*\}\s*)*/,dl=s=>s.replace(TG,'').startsWith('-');
+function prepText(t){
+ t=t.replace(/\s*--(?=(?:\{[^}]*\})*(?:\\N|$))/g,'...');
+ t=t.replace(/(^|\\N)(\s*(?:\{[^}]*\})*\s*)-(?=[^\s\d-])/g,'$1$2- ');
+ const ps=t.split('\\N').map(s=>s.trim());
+ t=ps.reduce((a,p,i)=>i?a+(dl(ps[0])&&dl(p)?'\\N':' ')+p:p,'');
+ return t.replace(/\[/g,'(').replace(/\]/g,')').replace(/ {2,}/g,' ').trim();
+}
 async function translate(){
- const items=parse($('src').value);if(!items.length)return toast('вставь текст');
+ const raw=parse($('src').value);if(!raw.length)return toast('вставь текст');
+ if(sdhOn()&&await ask()==='off'){$('sdh').classList.remove('act');$('sdh').setAttribute('aria-pressed',false);S('sdh',false);return toast('кнопка отключена — запусти перевод ещё раз')}
+ const sdh=sdhOn();
+ let items=raw.map(x=>({...x,text:prepText(x.text)}));joinEllipsis(items);
+ toast('подготовка: исправлено строк — '+items.filter((x,i)=>x.text!==raw[i].text).length);
+ $('src').value=items.map(x=>x.pre+x.text).join('\n');
+ if(sdh)items=items.filter(x=>!/^\(.*\)$/.test(x.text.replace(TG,'').trim()));
  const N=+$('chunk').value||80,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
  for(let i=0;i<items.length&&!stop;i+=N){
   const part=items.slice(i,i+N),cs=Math.max(0,i-6);
@@ -131,7 +193,7 @@ async function translate(){
   if(stop)break;
   part.forEach((x,k)=>out.push(res?res[k+1]:'[НЕ ПЕРЕВЕДЕНО] '+x.text));
   const n=Math.min(i+N,items.length);$('bar').style.width=100*n/items.length+'%';$('pt').textContent=n+' / '+items.length;
-  $('dst').value=out.map((t,k)=>items[k].pre+t).join('\n');
+  $('dst').value=out.map((t,k)=>[items[k].pre,t]).filter(([,t])=>!(sdh&&!t.trim())).map(([p,t])=>p+t).join('\n');
  }
  const r=$('dst').value;S('last',r);$('a').value=r;$('go').disabled=false;toast(stop?'остановлено':'готово');
 }
@@ -188,6 +250,6 @@ $('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObject
 $('im').onclick=()=>$('fi').click();
 $('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());pairs=d.pairs||[];$('guide').value=d.guide||'';$('gloss').value=d.gloss||'';S('pairs',pairs);S('guide',$('guide').value);S('gloss',$('gloss').value);upd();toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
 $('clr').onclick=()=>{if(confirm('Очистить базу правок?')){pairs=[];S('pairs',[]);S('since',0);upd()}};
-$('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');showUse();upd();
+$('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');$('sdh').classList.toggle('act',!!L('sdh',false));$('sdh').onclick=()=>{const v=!sdhOn();$('sdh').classList.toggle('act',v);$('sdh').setAttribute('aria-pressed',v);S('sdh',v)};showUse();upd();
 if(!$('c_worker').value)document.querySelector('[data-p=c]').click();
 </script></body></html>
