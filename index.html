@@ -94,11 +94,11 @@ async function ai(messages,temp=.3){
  const r=await fetch(w,{method:'POST',headers:{'Content-Type':'application/json','X-Token':$('c_token').value.trim()},body:JSON.stringify({model:$('c_model').value.trim(),temperature:temp,max_tokens:8000,thinking:{type:'disabled'},messages})});
  const d=await r.json().catch(()=>({}));
  if(!r.ok)throw new Error((d.error&&d.error.message)||r.status);
- const pk=peak(),u=L('use',{c:0});u.c=(u.c||0)+((d.usage?.prompt_tokens||0)*(pk?0.3:0.15)+(d.usage?.completion_tokens||0)*(pk?1.2:0.6))/1e6;S('use',u);showUse();
+ const pk=peak(),us=d.usage||{},h=us.prompt_cache_hit_tokens||0,m=us.prompt_cache_miss_tokens??((us.prompt_tokens||0)-h),u=L('use',{c:0});u.c=(u.c||0)+(h*(pk?0.006:0.003)+m*(pk?0.3:0.15)+(us.completion_tokens||0)*(pk?1.2:0.6))/1e6;u.h=(u.h||0)+h;u.t=(u.t||0)+(us.prompt_tokens||0);S('use',u);showUse();
  return d.choices[0].message.content;
 }
 const peak=()=>{const n=new Date(),d=n.getUTCDay(),h=n.getUTCHours();return d>0&&d<6&&((h>=1&&h<4)||(h>=6&&h<10))};
-function showUse(){$('cost').textContent='≈ $'+(L('use',{c:0}).c||0).toFixed(3)+(peak()?' · пик':' · off-peak')}
+function showUse(){const u=L('use',{c:0});$('cost').textContent='≈ $'+(u.c||0).toFixed(3)+(peak()?' · пик':' · off-peak')+(u.t?' · кэш '+Math.round(100*(u.h||0)/u.t)+'%':'')}
 $('cost').onclick=()=>{S('use',{c:0});showUse()};
 
 // --- Перевод
@@ -109,11 +109,11 @@ function sys(){
 СТИЛЬ:
 ${$('guide').value.trim()||'(нет)'}
 
-ПРОЕКТ (имена, термины, обращения):
-${$('gloss').value.trim()||'(нет)'}
-
 ПРИМЕРЫ ПРАВОК (ориентируйся на «СТАЛО»):
-${ex||'(нет)'}`}
+${ex||'(нет)'}
+
+ПРОЕКТ (имена, термины, обращения — писать строго так):
+${$('gloss').value.trim()||'(нет)'}`}
 async function translate(){
  const items=parse($('src').value);if(!items.length)return toast('вставь текст');
  const N=+$('chunk').value||80,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
