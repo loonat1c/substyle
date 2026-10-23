@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SubStyle</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111009;--surface:#1c1b18;--surface2:#262420;--text:#f2ede4;--text2:#c8c2b8;--text3:#8a8480;--accent:#d4a853;--accent2:#f0d898;--btn-text:#0f0e0c;--vy:#5ba8f5;--ok:#3dd68c;
+--font-display:'Unbounded','Onest',sans-serif;--font-body:'Onest',system-ui,sans-serif;--r-md:16px;--r-lg:24px;--ease:cubic-bezier(.2,.8,.2,1);
+--glass:color-mix(in srgb,var(--surface) 58%,transparent);--card:color-mix(in srgb,var(--surface) 82%,transparent);
+--line:color-mix(in srgb,var(--text) 10%,transparent);--tint:color-mix(in srgb,var(--accent) 14%,transparent);
+--shadow:0 1px 0 rgba(255,255,255,.05) inset,0 20px 40px -24px rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:15px/1.5 var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(38% 38% at 18% 14%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 70%),radial-gradient(34% 34% at 86% 8%,color-mix(in srgb,var(--vy) 20%,transparent),transparent 70%),radial-gradient(44% 44% at 72% 96%,color-mix(in srgb,var(--accent2) 18%,transparent),transparent 70%);animation:drift 30s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,3%,0) scale(1.08)}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{position:sticky;top:0;height:68px;padding:0 1.25rem;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line);z-index:50}
+h1{font:600 17px var(--font-display);letter-spacing:-.02em;margin:0;background:linear-gradient(100deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font:500 12.5px var(--font-display);letter-spacing:-.01em;color:var(--text2);margin:0 0 16px}
+.w{max-width:1200px;margin:0 auto;padding:20px 1.25rem 48px}
+.sp{flex:1}.mu{color:var(--text3)}
+.pill{padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:var(--glass);color:var(--text2);font-size:13px}
+#toast::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:8px;box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
+nav{display:inline-flex;gap:4px;padding:5px;max-width:100%;overflow-x:auto;scrollbar-width:none;background:var(--glass);border:1px solid var(--line);border-radius:999px;margin-bottom:20px}
+nav button{padding:9px 20px;font:500 14px var(--font-body);border:0;border-radius:999px;background:transparent;color:var(--text3);box-shadow:none}
+nav button:hover{color:var(--text);transform:none;box-shadow:none}
+nav button.on{background:var(--accent);color:var(--btn-text);font-weight:600;box-shadow:0 8px 20px -8px var(--accent)}
+section:not([hidden]){animation:paneIn .4s var(--ease)}
+@keyframes paneIn{from{opacity:0;transform:translateY(8px)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.4rem;margin-bottom:16px;box-shadow:var(--shadow)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+textarea,input,select{width:100%;background:color-mix(in srgb,var(--surface2) 70%,transparent);color:var(--text);border:1px solid var(--line);border-radius:var(--r-md);padding:11px 16px;font:400 14.5px var(--font-body);margin-bottom:8px;outline:none;transition:border-color .2s,box-shadow .2s}
+textarea{min-height:260px;resize:vertical;font:13px/1.5 ui-monospace,Consolas,monospace}
+textarea:focus,input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent)}
+::placeholder{color:var(--text3)}
+select option{background:var(--bg);color:var(--text)}
+label{display:block;color:var(--text3);font-size:12.5px;margin-bottom:6px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.row select,.row input{width:auto;margin:0}
+button{padding:11px 22px;font:600 14.5px var(--font-body);border-radius:999px;background:var(--accent);color:var(--btn-text);border:0;cursor:pointer;white-space:nowrap;box-shadow:0 10px 24px -12px var(--accent);transition:transform .2s var(--ease),box-shadow .2s,background .2s,color .2s}
+button:hover{transform:translateY(-2px);box-shadow:0 14px 28px -12px var(--accent)}
+button:active{transform:scale(.97)}
+button.sec{background:transparent;color:var(--text2);border:1px solid var(--line);font-weight:500;box-shadow:none}
+button.sec:hover{background:var(--surface2);color:var(--text);box-shadow:none}
+button:disabled{opacity:.5;transform:none;cursor:default}
+.bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:14px 0 6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .3s}
+table{width:100%;border-collapse:separate;border-spacing:0 6px;margin-top:10px}
+th{color:var(--text3);font:500 12px var(--font-body);text-align:left;padding:0 14px}
+td{padding:10px 14px;vertical-align:top;background:color-mix(in srgb,var(--surface2) 55%,transparent);border:solid var(--line);border-width:1px 0}
+td:first-child{border-left-width:1px;border-radius:var(--r-md) 0 0 var(--r-md)}
+td:last-child{border-right-width:1px;border-radius:0 var(--r-md) var(--r-md) 0}
+del{background:rgba(255,107,122,.25);text-decoration:none;border-radius:4px}
+ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
+@media(max-width:800px){.cols{grid-template-columns:1fr}header{height:60px;padding:0 .85rem}.w{padding:16px .85rem 40px}nav button{padding:9px 14px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="sp"></span><span class="pill" id="toast">готов</span></header>
+<div class="w">
+<nav id="nav"><button data-p="t" class="on">Перевод</button><button data-p="e">Правки</button><button data-p="s">Проект и стиль</button><button data-p="c">Настройки</button></nav>
+
+<section id="p_t"><div class="card"><div class="cols">
+<div><label>Исходник (ASS, англ.)</label><textarea id="src" placeholder="Dialogue: 0,0:53:03.12,0:53:05.59,Default,,0,0,0,,Let's go on a date."></textarea></div>
+<div><label>Перевод</label><textarea id="dst"></textarea></div></div>
+<div class="bar"><i id="bar"></i></div>
+<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="80" style="width:80px"><span id="pt" class="mu"></span></div></div></section>
+
+<section id="p_e" hidden><div class="card"><div class="cols">
+<div><label>Что отдал DeepSeek (подставляется автоматически)</label><textarea id="a"></textarea></div>
+<div><label>После правок в Aegisub</label><textarea id="b"></textarea></div></div>
+<div class="row"><button id="cmp">Сравнить и сохранить правки</button><span id="st" class="mu"></span></div><div id="diff"></div></div></section>
+
+<section id="p_s" hidden>
+<div class="card"><h2>Глоссарий проекта (из bfnames)</h2><div class="row" style="margin-bottom:8px"><select id="drama"><option value="">— дорама —</option></select><button class="sec" id="ld">Загрузить из bfnames</button></div><textarea id="gloss" style="min-height:160px"></textarea></div>
+<div class="card"><h2>Гайд по стилю</h2><textarea id="guide" style="min-height:240px;font-family:inherit"></textarea>
+<div class="row"><button id="an">Обновить гайд по правкам</button><span id="pc" class="mu"></span><span class="sp"></span><button class="sec" id="ex">Экспорт</button><button class="sec" id="im">Импорт</button><button class="sec" id="clr">Очистить базу</button></div><input type="file" id="fi" hidden></div></section>
+
+<section id="p_c" hidden><div class="card"><h2>Подключение</h2>
+<label>URL Cloudflare Worker</label><input id="c_worker" placeholder="https://name.account.workers.dev">
+<label>Пароль доступа (тот же, что APP_TOKEN в Worker)</label><input id="c_token" type="password">
+<label>Модель DeepSeek (точное имя — на странице Models &amp; Pricing)</label><input id="c_model" value="deepseek-flash">
+<label>URL базы bfnames (Realtime Database)</label><input id="c_db" value="https://bfnames-default-rtdb.europe-west1.firebasedatabase.app">
+<label>PIN-код bfnames (4 цифры)</label><input id="c_pin" type="password" inputmode="numeric" maxlength="4"></div></section>
+</div>
+<script>
+const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const L=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const toast=t=>$('toast').textContent=t;
+let pairs=L('pairs',[]),stop=false,dramas={};
+const ASS=/^(\s*Dialogue:\s*[^,]*,([^,]*),[^,]*,(?:[^,]*,){6})(.*)$/;
+function parse(t){const seen={};return t.split(/\r?\n/).filter(l=>l.trim()).map((l,i)=>{const m=l.match(ASS);if(!m)return{pre:'',text:l.trim(),key:'i'+i};const s=m[2].trim();seen[s]=(seen[s]||0)+1;return{pre:m[1],text:m[3].trim(),key:s+'#'+seen[s]}})}
+
+// --- API через Worker
+async function ai(messages,temp=.3){
+ const w=$('c_worker').value.trim();if(!w)throw new Error('укажи URL Worker в Настройках');
+ const r=await fetch(w,{method:'POST',headers:{'Content-Type':'application/json','X-Token':$('c_token').value.trim()},body:JSON.stringify({model:$('c_model').value.trim(),temperature:temp,max_tokens:8000,thinking:{type:'disabled'},messages})});
+ const d=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error((d.error&&d.error.message)||r.status);
+ const pk=peak(),u=L('use',{c:0});u.c=(u.c||0)+((d.usage?.prompt_tokens||0)*(pk?0.3:0.15)+(d.usage?.completion_tokens||0)*(pk?1.2:0.6))/1e6;S('use',u);showUse();
+ return d.choices[0].message.content;
+}
+const peak=()=>{const n=new Date(),d=n.getUTCDay(),h=n.getUTCHours();return d>0&&d<6&&((h>=1&&h<4)||(h>=6&&h<10))};
+function showUse(){$('cost').textContent='≈ $'+(L('use',{c:0}).c||0).toFixed(3)+(peak()?' · пик':' · off-peak')}
+$('cost').onclick=()=>{S('use',{c:0});showUse()};
+
+// --- Перевод
+function sys(){
+ const ex=pairs.slice(-20).map(p=>`БЫЛО: ${p.before}\nСТАЛО: ${p.after}`).join('\n\n');
+ return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.
+
+СТИЛЬ:
+${$('guide').value.trim()||'(нет)'}
+
+ПРОЕКТ (имена, термины, обращения):
+${$('gloss').value.trim()||'(нет)'}
+
+ПРИМЕРЫ ПРАВОК (ориентируйся на «СТАЛО»):
+${ex||'(нет)'}`}
+async function translate(){
+ const items=parse($('src').value);if(!items.length)return toast('вставь текст');
+ const N=+$('chunk').value||80,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
+ for(let i=0;i<items.length&&!stop;i+=N){
+  const part=items.slice(i,i+N),cs=Math.max(0,i-6);
+  const ctx=items.slice(cs,i).map((x,k)=>x.text+' => '+out[cs+k]).join('\n');
+  const user=(ctx?`КОНТЕКСТ (уже переведено, не переводить):\n${ctx}\n\n`:'')+'ПЕРЕВЕДИ:\n'+part.map((x,k)=>`${k+1}|${x.text}`).join('\n');
+  let res=null;
+  for(let a=0;a<3&&!stop&&!res;a++){
+   try{
+    const m={};(await ai([{role:'system',content:sp},{role:'user',content:user}])).split(/\r?\n/).forEach(l=>{const q=l.match(/^(\d+)\|(.*)$/);if(q)m[+q[1]]=q[2].trim()});
+    if(part.every((_,k)=>m[k+1]!=null))res=m;else toast('не все строки вернулись, повтор…');
+   }catch(e){toast('ошибка: '+e.message);await new Promise(r=>setTimeout(r,1500*(a+1)))}
+  }
+  if(stop)break;
+  part.forEach((x,k)=>out.push(res?res[k+1]:'[НЕ ПЕРЕВЕДЕНО] '+x.text));
+  const n=Math.min(i+N,items.length);$('bar').style.width=100*n/items.length+'%';$('pt').textContent=n+' / '+items.length;
+  $('dst').value=out.map((t,k)=>items[k].pre+t).join('\n');
+ }
+ const r=$('dst').value;S('last',r);$('a').value=r;$('go').disabled=false;toast(stop?'остановлено':'готово');
+}
+
+// --- Правки
+function wd(a,b){const A=a.split(/(\s+)/),B=b.split(/(\s+)/),n=A.length,m=B.length,d=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+ for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)d[i][j]=A[i]===B[j]?d[i+1][j+1]+1:Math.max(d[i+1][j],d[i][j+1]);
+ let i=0,j=0,l='',r='';while(i<n&&j<m){if(A[i]===B[j]){l+=esc(A[i]);r+=esc(B[j]);i++;j++}else if(d[i+1][j]>=d[i][j+1])l+='<del>'+esc(A[i++])+'</del>';else r+='<ins>'+esc(B[j++])+'</ins>'}
+ while(i<n)l+='<del>'+esc(A[i++])+'</del>';while(j<m)r+='<ins>'+esc(B[j++])+'</ins>';return[l,r]}
+async function cmp(){
+ const o=parse($('a').value),e=parse($('b').value),em=new Map(e.map(x=>[x.key,x]));let same=0;const ch=[];
+ o.forEach((x,i)=>{const y=(x.key[0]!=='i'&&em.get(x.key))||e[i];if(!y)return;x.text===y.text?same++:ch.push([x.text,y.text])});
+ const seen=new Set(pairs.map(p=>p.before+'\u0001'+p.after));let add=0;
+ ch.forEach(([b,a])=>{const k=b+'\u0001'+a;if(!seen.has(k)){pairs.push({before:b,after:a});seen.add(k);add++}});
+ S('pairs',pairs);S('since',L('since',0)+add);upd();
+ $('st').textContent=`без изменений: ${same}, изменено: ${ch.length}, новых в базу: ${add}`;
+ $('diff').innerHTML=ch.length?'<table><tr><th>DeepSeek</th><th>Твой вариант</th></tr>'+ch.map(([b,a])=>{const[l,r]=wd(b,a);return`<tr><td>${l}</td><td>${r}</td></tr>`}).join('')+'</table>':'';
+ if(L('since',0)>=50){toast('копится стиль, анализирую…');analyze()}
+}
+
+// --- Анализ стиля
+async function analyze(){
+ if(!pairs.length)return toast('база пуста');
+ const list=pairs.slice(-150).map((p,i)=>`${i+1}. БЫЛО: ${p.before}\n   СТАЛО: ${p.after}`).join('\n'),old=$('guide').value.trim();
+ try{
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, типичные ошибки машинного перевода. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  $('guide').value=t.trim();S('guide',t.trim());S('since',0);upd();toast('гайд обновлён');
+ }catch(e){toast('ошибка: '+e.message)}
+}
+function upd(){$('pc').textContent=`в базе правок: ${pairs.length}, новых с прошлого анализа: ${L('since',0)}`}
+
+// --- bfnames
+async function loadD(){
+ const b=$('c_db').value.trim().replace(/\/+$/,'');if(!b)return toast('укажи URL bfnames в Настройках');
+ try{const a=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAg_UhVP2DRU_jrqJD-Or3Iy8ZEIQWaAIU',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'basic@bfnames.app',password:'bf'+$('c_pin').value.trim(),returnSecureToken:true})});
+  const ad=await a.json();if(!a.ok)throw new Error('вход: '+(ad.error?.message||a.status));
+  const r=await fetch(b+'/dramas.json?auth='+ad.idToken);if(!r.ok)throw new Error(r.status);dramas=await r.json()||{};
+  $('drama').innerHTML='<option value="">— дорама —</option>'+Object.entries(dramas).map(([id,d])=>`<option value="${esc(id)}">${esc(d.name||id)}</option>`).join('');toast('дорам: '+Object.keys(dramas).length)}
+ catch(e){toast('bfnames: '+e.message)}
+}
+function gl(d){const ch=d.chars||{},nm=id=>ch[id]?.name||'?',g=c=>c.gender==='m'?' (м)':c.gender==='f'?' (ж)':'';
+ const pr=Object.values(d.pairs||{}).map(p=>[p.speech&&`${nm(p.a)} → ${nm(p.b)}: ${p.speech}`,p.speechRev&&`${nm(p.b)} → ${nm(p.a)}: ${p.speechRev}`,p.note&&`(${p.note})`].filter(Boolean).join('; ')).filter(Boolean);
+ return `Дорама: ${d.name||''}\nПерсонажи (писать именно так): ${Object.values(ch).filter(c=>c.name).map(c=>c.name+g(c)).join(', ')}\nНазвания и термины: ${Object.values(d.terms||{}).join(', ')}\nОбращения (кто как обращается к кому):\n${pr.join('\n')}`}
+
+// --- UI
+$('nav').onclick=e=>{const p=e.target.dataset.p;if(!p)return;[...$('nav').children].forEach(b=>b.classList.toggle('on',b===e.target));['t','e','s','c'].forEach(k=>$('p_'+k).hidden=k!==p)};
+$('go').onclick=translate;$('stopb').onclick=()=>stop=true;
+$('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('dst').value);toast('скопировано')}catch(e){$('dst').select()}};
+$('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;
+$('drama').onchange=()=>{const d=dramas[$('drama').value];$('gloss').value=d?gl(d):'';S('gloss',$('gloss').value)};
+$('gloss').oninput=()=>S('gloss',$('gloss').value);$('guide').oninput=()=>S('guide',$('guide').value);
+['worker','token','model','db','pin'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
+$('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({pairs,guide:$('guide').value,gloss:$('gloss').value},null,1)],{type:'application/json'}));a.download='substyle-base.json';a.click()};
+$('im').onclick=()=>$('fi').click();
+$('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());pairs=d.pairs||[];$('guide').value=d.guide||'';$('gloss').value=d.gloss||'';S('pairs',pairs);S('guide',$('guide').value);S('gloss',$('gloss').value);upd();toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
+$('clr').onclick=()=>{if(confirm('Очистить базу правок?')){pairs=[];S('pairs',[]);S('since',0);upd()}};
+$('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');showUse();upd();
+if(!$('c_worker').value)document.querySelector('[data-p=c]').click();
+</script></body></html>
