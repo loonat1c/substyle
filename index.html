@@ -172,9 +172,9 @@ async function loadD(){
   $('drama').innerHTML='<option value="">— дорама —</option>'+Object.entries(dramas).sort((x,y)=>(x[1].name||'').localeCompare(y[1].name||'','ru')).map(([id,d])=>`<option value="${esc(id)}">${esc(d.name||id)}</option>`).join('');toast('дорам: '+Object.keys(dramas).length)}
  catch(e){toast('bfnames: '+e.message)}
 }
-function gl(d){const ch=d.chars||{},nm=id=>ch[id]?.name||'?',g=c=>c.gender==='m'?' (м)':c.gender==='f'?' (ж)':'';
+function gl(d){const ch=Object.fromEntries(Object.entries(d.chars||{}).map(([k,v])=>[k,typeof v==='object'?v:{name:v}])),nm=id=>ch[id]?.name||'?',g=c=>c.gender==='m'?' (м)':c.gender==='f'?' (ж)':'';
  const pr=Object.values(d.pairs||{}).map(p=>[p.speech&&`${nm(p.a)} → ${nm(p.b)}: ${p.speech}`,p.speechRev&&`${nm(p.b)} → ${nm(p.a)}: ${p.speechRev}`,p.note&&`(${p.note})`].filter(Boolean).join('; ')).filter(Boolean);
- return `Дорама: ${d.name||''}\nПерсонажи (писать именно так): ${Object.values(ch).filter(c=>c.name).map(c=>c.name+g(c)).join(', ')}\nНазвания и термины: ${Object.values(d.terms||{}).join(', ')}\nОбращения (кто как обращается к кому):\n${pr.join('\n')}`}
+ return `Дорама: ${d.name||''}\nПерсонажи (писать именно так): ${Object.values(ch).filter(c=>c.name).map(c=>c.name+g(c)).join(', ')}\nНазвания и термины: ${Object.values(d.terms||{}).map(t=>typeof t==='object'?t.val:t).filter(Boolean).join(', ')}\nОбращения (кто как обращается к кому):\n${pr.join('\n')}`}
 
 // --- UI
 $('nav').onclick=e=>{const p=e.target.dataset.p;if(!p)return;[...$('nav').children].forEach(b=>b.classList.toggle('on',b===e.target));['t','e','s','c'].forEach(k=>$('p_'+k).hidden=k!==p)};
