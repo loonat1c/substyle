@@ -49,6 +49,12 @@ button.sec{background:transparent;color:var(--text2);border:1px solid var(--line
 button.sec:hover{background:var(--surface2);color:var(--text);box-shadow:none}
 button:disabled{opacity:.5;transform:none;cursor:default}
 .act{background:var(--tint)!important;color:var(--text)!important;border-color:var(--accent)!important}
+#toast{cursor:pointer}
+.lg{position:fixed;top:72px;right:1.25rem;width:min(440px,92vw);max-height:50vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px;box-shadow:0 24px 60px -12px rgba(0,0,0,.6);z-index:60;animation:paneIn .25s var(--ease)}
+.lg[hidden]{display:none}
+.le{display:flex;gap:12px;padding:6px 8px;border-radius:10px;font-size:13px;color:var(--text2)}
+.le span:first-child{color:var(--text3);font-variant-numeric:tabular-nums;flex-shrink:0}
+.le.bad{color:#ff8c8c;background:rgba(255,107,122,.08)}
 .ib{width:42px;height:42px;padding:0;display:inline-grid;place-items:center;position:relative;margin-left:auto}
 .ib svg{width:20px;height:20px}
 .ib::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font:500 12.5px var(--font-body);color:var(--text2);white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .2s,transform .2s var(--ease);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
@@ -72,7 +78,7 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 @media(max-width:800px){.cols{grid-template-columns:1fr}header{min-height:60px;padding:8px .85rem}.w{padding:16px .85rem 40px}nav button{padding:9px 14px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head><body>
-<header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="pill tm" id="tm"><i class="dot"></i><span id="tml"></span><b id="tmt"></b></span><span class="sp"></span><span class="pill" id="toast">готов</span></header>
+<header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="pill tm" id="tm"><i class="dot"></i><span id="tml"></span><b id="tmt"></b></span><span class="sp"></span><span class="pill" id="toast" title="Клик — лог статусов">готов</span></header>
 <div class="w">
 <nav id="nav"><button data-p="t" class="on">Перевод</button><button data-p="e">Правки</button><button data-p="s">Проект и стиль</button><button data-p="c">Настройки</button></nav>
 
@@ -99,11 +105,17 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <label>URL базы bfnames (Realtime Database)</label><input id="c_db" value="https://bfnames-default-rtdb.europe-west1.firebasedatabase.app">
 <label>PIN-код bfnames (4 цифры)</label><input id="c_pin" type="password" inputmode="numeric" maxlength="4"></div></section>
 </div>
+<div class="lg" id="lg" hidden></div>
 <div class="ov" id="md" hidden><div class="md"><h2>Включено удаление пометок</h2><p>Кнопка «Убрать пометки для слабослышащих» нажата: строки вроде (вздыхает) и имена говорящих будут удалены из перевода. Так и должно быть?</p><div class="row"><button class="sec" id="md_off">Отключить</button><button id="md_go">Да, переводить</button></div></div></div>
 <script>
 const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const L=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-const toast=t=>$('toast').textContent=t;
+const logs=[];
+const lg=t=>{logs.push([Date.now(),t]);if(!$('lg').hidden)renderLog()};
+const toast=t=>{$('toast').textContent=t;lg(t)};
+function renderLog(){$('lg').innerHTML=logs.length?logs.map(([ts,t])=>{const d=new Date(ts);return `<div class="le${/ошибк|не все|не перев/.test(t)?' bad':''}"><span>${z2(d.getHours())}:${z2(d.getMinutes())}:${z2(d.getSeconds())}</span><span>${esc(t)}</span></div>`}).join(''):'<div class="le"><span></span><span>Лог пуст</span></div>'}
+$('toast').onclick=e=>{e.stopPropagation();const l=$('lg');l.hidden=!l.hidden;if(!l.hidden)renderLog()};
+document.addEventListener('click',e=>{if(!$('lg').contains(e.target))$('lg').hidden=true});
 let pairs=L('pairs',[]),stop=false,dramas={};
 const ASS=/^(\s*Dialogue:\s*[^,]*,([^,]*),[^,]*,(?:[^,]*,){6})(.*)$/;
 function parse(t){const seen={};return t.split(/\r?\n/).filter(l=>l.trim()).map((l,i)=>{const m=l.match(ASS);if(!m)return{pre:'',text:l.trim(),key:'i'+i};const s=m[2].trim();seen[s]=(seen[s]||0)+1;return{pre:m[1],text:m[3].trim(),key:s+'#'+seen[s]}})}
@@ -162,8 +174,18 @@ const sdhOn=()=>$('sdh').classList.contains('act');
 const ask=()=>new Promise(r=>{const m=$('md');m.hidden=false;$('md_off').onclick=()=>{m.hidden=true;r('off')};$('md_go').onclick=()=>{m.hidden=true;r('go')}});
 const EL=/\s*(\.{3}|…)\s*$/,ES=/^((?:\{[^}]*\}\s*)*)(\.{3}|…)\s*/;
 function joinEllipsis(a){for(let i=0;i<a.length-1;i++)if(EL.test(a[i].text)&&ES.test(a[i+1].text)){a[i].text=a[i].text.replace(EL,'');a[i+1].text=a[i+1].text.replace(ES,'$1')}}
+const ACR=/^(FBI|CIA|NIS|USA|UN|TV|CCTV|DNA|VIP|ICU|ER|CEO|PD|PC|ID|SOS|OK|DJ|KTX|SUV|VR|AI|DMZ|NASA|UFO)$/;
+const tc=w=>ACR.test(w)?w:w.charAt(0)+w.slice(1).toLowerCase();
+function capsSign(t){
+ const m=t.match(/^((?:\{[^}]*\}\s*)*)(.*)$/),pre=m[1],b=m[2];
+ if(!b||/\{|\\N/.test(b)||dl(b))return t;
+ const w=b.match(/^\((.*)\)$/),inner=w?w[1]:b;
+ if(/[!?:]$/.test(inner)||/[a-zа-яё()]/.test(inner)||(inner.match(/[A-Z]/g)||[]).length<2)return t;
+ return pre+'('+inner.replace(/[A-Z][A-Z'’]*/g,tc)+')';
+}
 const TG=/^\s*(\{[^}]*\}\s*)*/,dl=s=>s.replace(TG,'').startsWith('-');
 function prepText(t){
+ t=t.replace(/\\an8(?!\d)/g,'').replace(/\{\s*\}/g,'');
  t=t.replace(/\s*--(?=(?:\{[^}]*\})*(?:\\N|$))/g,'...');
  t=t.replace(/(^|\\N)(\s*(?:\{[^}]*\})*\s*)-(?=[^\s\d-])/g,'$1$2- ');
  const ps=t.split('\\N').map(s=>s.trim());
@@ -173,24 +195,24 @@ function prepText(t){
 async function translate(){
  const raw=parse($('src').value);if(!raw.length)return toast('вставь текст');
  if(sdhOn()&&await ask()==='off'){$('sdh').classList.remove('act');$('sdh').setAttribute('aria-pressed',false);S('sdh',false);return toast('кнопка отключена — запусти перевод ещё раз')}
- const sdh=sdhOn();
- let items=raw.map(x=>({...x,text:prepText(x.text)}));joinEllipsis(items);
+ const sdh=sdhOn();logs.length=0;lg('старт: '+raw.length+' строк');
+ let items=raw.map(x=>({...x,text:prepText(x.text)}));joinEllipsis(items);items.forEach(x=>{x.cue=/^\(.*\)$/.test(x.text.replace(TG,'').trim());x.text=capsSign(x.text)});
  toast('подготовка: исправлено строк — '+items.filter((x,i)=>x.text!==raw[i].text).length);
  $('src').value=items.map(x=>x.pre+x.text).join('\n');
- if(sdh)items=items.filter(x=>!/^\(.*\)$/.test(x.text.replace(TG,'').trim()));
+ if(sdh)items=items.filter(x=>!x.cue);
  const N=+$('chunk').value||80,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
  for(let i=0;i<items.length&&!stop;i+=N){
-  const part=items.slice(i,i+N),cs=Math.max(0,i-6);
+  const part=items.slice(i,i+N),cs=Math.max(0,i-6),cn=Math.round(i/N)+1,ct=Math.ceil(items.length/N);
   const ctx=items.slice(cs,i).map((x,k)=>x.text+' => '+out[cs+k]).join('\n');
   const user=(ctx?`КОНТЕКСТ (уже переведено, не переводить):\n${ctx}\n\n`:'')+'ПЕРЕВЕДИ:\n'+part.map((x,k)=>`${k+1}|${x.text}`).join('\n');
   let res=null;
   for(let a=0;a<3&&!stop&&!res;a++){
    try{
-    const m={};(await ai([{role:'system',content:sp},{role:'user',content:user}])).split(/\r?\n/).forEach(l=>{const q=l.match(/^(\d+)\|(.*)$/);if(q)m[+q[1]]=q[2].trim()});
-    if(part.every((_,k)=>m[k+1]!=null))res=m;else toast('не все строки вернулись, повтор…');
-   }catch(e){toast('ошибка: '+e.message);await new Promise(r=>setTimeout(r,1500*(a+1)))}
+    const m={};(await ai([{role:'system',content:sp},{role:'user',content:user}])).split(/\r?\n/).forEach(l=>{const q=l.match(/^(\d+)\|(.*)$/);if(q)m[+q[1]]=q[2].trim().replace(/[«»]/g,'"')});
+    if(part.every((_,k)=>m[k+1]!=null)){res=m;lg(`кусок ${cn}/${ct}: готово, попытка ${a+1}`)}else toast(`кусок ${cn}/${ct}: не все строки вернулись, повтор…`);
+   }catch(e){toast(`кусок ${cn}/${ct}: ошибка — ${e.message}`);await new Promise(r=>setTimeout(r,1500*(a+1)))}
   }
-  if(stop)break;
+  if(stop)break;if(!res)toast(`кусок ${cn}/${ct}: не переведён, оставлен оригинал`);
   part.forEach((x,k)=>out.push(res?res[k+1]:'[НЕ ПЕРЕВЕДЕНО] '+x.text));
   const n=Math.min(i+N,items.length);$('bar').style.width=100*n/items.length+'%';$('pt').textContent=n+' / '+items.length;
   $('dst').value=out.map((t,k)=>[items[k].pre,t]).filter(([,t])=>!(sdh&&!t.trim())).map(([p,t])=>p+t).join('\n');
