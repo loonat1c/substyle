@@ -95,6 +95,9 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 
 <section id="p_s" hidden>
 <div class="card"><h2>Глоссарий проекта (из bfnames)</h2><div class="row" style="margin-bottom:8px"><select id="drama"><option value="">— дорама —</option></select><button class="sec" id="ld">Загрузить из bfnames</button></div><textarea id="gloss" style="min-height:160px"></textarea></div>
+<div class="card"><h2>Стартовые образцы стиля</h2><p class="mu" style="margin:-6px 0 14px">Вставь свои готовые переводы (ASS). Оригинал слева — по желанию, так точнее. Из образцов соберётся гайд по стилю.</p>
+<div class="cols"><div><label>Оригинал, англ. (необязательно)</label><textarea id="sen" style="min-height:180px"></textarea></div><div><label>Твой готовый перевод</label><textarea id="sru" style="min-height:180px"></textarea></div></div>
+<div class="row"><button id="sg">Создать гайд по образцам</button><span class="mu">до 800 строк за раз, повторный запуск дополняет гайд</span></div></div>
 <div class="card"><h2>Гайд по стилю</h2><textarea id="guide" style="min-height:240px;font-family:inherit"></textarea>
 <div class="row"><button id="an">Обновить гайд по правкам</button><span id="pc" class="mu"></span><span class="sp"></span><button class="sec" id="ex">Экспорт</button><button class="sec" id="im">Импорт</button><button class="sec" id="clr">Очистить базу</button></div><input type="file" id="fi" hidden></div></section>
 
@@ -245,6 +248,23 @@ async function analyze(){
   $('guide').value=t.trim();S('guide',t.trim());S('since',0);upd();toast('гайд обновлён');
  }catch(e){toast('ошибка: '+e.message)}
 }
+async function sampleGuide(){
+ const A=parse($('sen').value),R=parse($('sru').value);
+ if(!R.length)return toast('вставь свой готовый перевод');
+ const em=new Map(A.map(x=>[x.key,x])),ct=s=>s.replace(/\{[^}]*\}/g,'').trim();
+ let rows=R.map((x,i)=>{
+  if(!A.length)return ct(x.text);
+  const e=A.length===R.length?A[i]:(x.key[0]!=='i'&&em.get(x.key));
+  return e?'EN: '+ct(e.text)+'\nRU: '+ct(x.text):'';
+ }).filter(Boolean);
+ if(rows.length>800){toast('слишком много — беру первые 800 строк');rows=rows.slice(0,800)}
+ const old=$('guide').value.trim();
+ toast('анализирую образцы…');
+ try{
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  $('guide').value=t.trim();S('guide',t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');
+ }catch(e){toast('ошибка: '+e.message)}
+}
 function upd(){$('pc').textContent=`в базе правок: ${pairs.length}, новых с прошлого анализа: ${L('since',0)}`}
 
 // --- bfnames
@@ -264,7 +284,7 @@ function gl(d){const ch=Object.fromEntries(Object.entries(d.chars||{}).map(([k,v
 $('nav').onclick=e=>{const p=e.target.dataset.p;if(!p)return;[...$('nav').children].forEach(b=>b.classList.toggle('on',b===e.target));['t','e','s','c'].forEach(k=>$('p_'+k).hidden=k!==p)};
 $('go').onclick=translate;$('stopb').onclick=()=>stop=true;
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('dst').value);toast('скопировано')}catch(e){$('dst').select()}};
-$('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;
+$('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;$('sg').onclick=sampleGuide;
 $('drama').onchange=()=>{const d=dramas[$('drama').value];$('gloss').value=d?gl(d):'';S('gloss',$('gloss').value)};
 $('gloss').oninput=()=>S('gloss',$('gloss').value);$('guide').oninput=()=>S('guide',$('guide').value);
 ['worker','token','model','db','pin'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
@@ -273,5 +293,9 @@ $('im').onclick=()=>$('fi').click();
 $('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());pairs=d.pairs||[];$('guide').value=d.guide||'';$('gloss').value=d.gloss||'';S('pairs',pairs);S('guide',$('guide').value);S('gloss',$('gloss').value);upd();toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
 $('clr').onclick=()=>{if(confirm('Очистить базу правок?')){pairs=[];S('pairs',[]);S('since',0);upd()}};
 $('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');$('sdh').classList.toggle('act',!!L('sdh',false));$('sdh').onclick=()=>{const v=!sdhOn();$('sdh').classList.toggle('act',v);$('sdh').setAttribute('aria-pressed',v);S('sdh',v)};showUse();upd();
+const KEEP=['src','dst','a','b','sen','sru'],lastV={};
+KEEP.forEach(k=>{const v=L('f_'+k,'');if(v)$(k).value=v;lastV[k]=$(k).value});
+const keep=()=>KEEP.forEach(k=>{const v=$(k).value;if(v!==lastV[k]){lastV[k]=v;S('f_'+k,v)}});
+setInterval(keep,1500);addEventListener('beforeunload',keep);
 if(!$('c_worker').value)document.querySelector('[data-p=c]').click();
 </script></body></html>
