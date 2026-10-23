@@ -168,7 +168,7 @@ async function loadD(){
  const b=$('c_db').value.trim().replace(/\/+$/,'');if(!b)return toast('укажи URL bfnames в Настройках');
  try{const a=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAg_UhVP2DRU_jrqJD-Or3Iy8ZEIQWaAIU',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'basic@bfnames.app',password:'bf'+$('c_pin').value.trim(),returnSecureToken:true})});
   const ad=await a.json();if(!a.ok)throw new Error('вход: '+(ad.error?.message||a.status));
-  const r=await fetch(b+'/dramas.json?auth='+ad.idToken);if(!r.ok)throw new Error(r.status);dramas=await r.json()||{};
+  const r=await fetch(b+'/dramas.json?auth='+ad.idToken);if(!r.ok)throw new Error(r.status);dramas=Object.fromEntries(Object.entries(await r.json()||{}).filter(([,d])=>!d.status||d.status==='ongoing'));
   $('drama').innerHTML='<option value="">— дорама —</option>'+Object.entries(dramas).map(([id,d])=>`<option value="${esc(id)}">${esc(d.name||id)}</option>`).join('');toast('дорам: '+Object.keys(dramas).length)}
  catch(e){toast('bfnames: '+e.message)}
 }
