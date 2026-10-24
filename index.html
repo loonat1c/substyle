@@ -106,7 +106,8 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <label>Пароль доступа (тот же, что APP_TOKEN в Worker)</label><input id="c_token" type="password">
 <label>Модель DeepSeek (точное имя — на странице Models &amp; Pricing)</label><input id="c_model" value="deepseek-flash">
 <label>URL базы bfnames (Realtime Database)</label><input id="c_db" value="https://bfnames-default-rtdb.europe-west1.firebasedatabase.app">
-<label>PIN-код bfnames (4 цифры)</label><input id="c_pin" type="password" inputmode="numeric" maxlength="4"></div></section>
+<label>PIN-код bfnames (4 цифры)</label><input id="c_pin" type="password" inputmode="numeric" maxlength="4">
+<label>Автообновление гайда после N новых правок (0 — только вручную)</label><input id="c_auto" type="number" min="0" value="1000"></div></section>
 </div>
 <div class="lg" id="lg" hidden></div>
 <div class="ov" id="md" hidden><div class="md"><h2>Включено удаление пометок</h2><p>Кнопка «Убрать пометки для слабослышащих» нажата: строки вроде (вздыхает) и имена говорящих будут удалены из перевода. Так и должно быть?</p><div class="row"><button class="sec" id="md_off">Отключить</button><button id="md_go">Да, переводить</button></div></div></div>
@@ -162,7 +163,7 @@ $('cost').onclick=()=>{S('use',{c:0});showUse()};
 
 // --- Перевод
 function sys(){
- const ex=pairs.slice(-20).map(p=>`БЫЛО: ${p.before}\nСТАЛО: ${p.after}`).join('\n\n');
+ const ex=pairs.filter(p=>norm(p.before)!==norm(p.after)).slice(-20).map(p=>`БЫЛО: ${p.before}\nСТАЛО: ${p.after}`).join('\n\n');
  return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.${sdhOn()?'\n\nУбирай технические пометки для слабослышащих: звуки и действия в скобках, например (вздыхает), (кричит), (музыка), и имена говорящих перед репликой, например «ДЖОН:». Если после удаления в строке ничего не осталось, верни только «номер|» с пустым текстом. Диалоговые дефисы «- » сохраняй.':''}
 
 СТИЛЬ:
@@ -236,15 +237,21 @@ async function cmp(){
  S('pairs',pairs);S('since',L('since',0)+add);upd();
  $('st').textContent=`без изменений: ${same}, изменено: ${ch.length}, новых в базу: ${add}`;
  $('diff').innerHTML=ch.length?'<table><tr><th>DeepSeek</th><th>Твой вариант</th></tr>'+ch.map(([b,a])=>{const[l,r]=wd(b,a);return`<tr><td>${l}</td><td>${r}</td></tr>`}).join('')+'</table>':'';
- if(L('since',0)>=50){toast('копится стиль, анализирую…');analyze()}
+ if(+$('c_auto').value>0&&L('since',0)>=+$('c_auto').value){toast('копится стиль, анализирую…');analyze()}
 }
 
 // --- Анализ стиля
+const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+function pick(n){
+ const rec=pairs.slice(-800),sub=rec.filter(p=>norm(p.before)!==norm(p.after)),pun=rec.filter(p=>norm(p.before)===norm(p.after));
+ const ev=(a,k)=>a.length<=k?a:Array.from({length:k},(_,i)=>a[Math.floor(i*a.length/k)]);
+ return[...ev(sub,Math.round(n*.75)),...ev(pun,Math.round(n*.25))];
+}
 async function analyze(){
  if(!pairs.length)return toast('база пуста');
- const list=pairs.slice(-150).map((p,i)=>`${i+1}. БЫЛО: ${p.before}\n   СТАЛО: ${p.after}`).join('\n'),old=$('guide').value.trim();
+ const list=pick(150).map((p,i)=>`${i+1}. БЫЛО: ${p.before}\n   СТАЛО: ${p.after}`).join('\n'),old=$('guide').value.trim();
  try{
-  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, типичные ошибки машинного перевода. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи гайд из двух разделов. СТИЛЬ: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия. ЧАСТЫЕ ОШИБКИ МОДЕЛИ: повторяющиеся исправления (род и согласование, пунктуация, термины) — сформулируй как конкретные правила, чтобы переводчик их не допускал. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
   $('guide').value=t.trim();S('guide',t.trim());S('since',0);upd();toast('гайд обновлён');
  }catch(e){toast('ошибка: '+e.message)}
 }
@@ -261,11 +268,11 @@ async function sampleGuide(){
  const old=$('guide').value.trim();
  toast('анализирую образцы…');
  try{
-  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
   $('guide').value=t.trim();S('guide',t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');
  }catch(e){toast('ошибка: '+e.message)}
 }
-function upd(){$('pc').textContent=`в базе правок: ${pairs.length}, новых с прошлого анализа: ${L('since',0)}`}
+function upd(){$('pc').textContent=`в базе правок: ${pairs.length}, новых с прошлого анализа: ${L('since',0)} · автообновление: ${+$('c_auto').value>0?'при '+$('c_auto').value:'выкл.'}`}
 
 // --- bfnames
 async function loadD(){
@@ -287,7 +294,7 @@ $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('dst').value
 $('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;$('sg').onclick=sampleGuide;
 $('drama').onchange=()=>{const d=dramas[$('drama').value];$('gloss').value=d?gl(d):'';S('gloss',$('gloss').value)};
 $('gloss').oninput=()=>S('gloss',$('gloss').value);$('guide').oninput=()=>S('guide',$('guide').value);
-['worker','token','model','db','pin'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
+['worker','token','model','db','pin','auto'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
 $('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({pairs,guide:$('guide').value,gloss:$('gloss').value},null,1)],{type:'application/json'}));a.download='substyle-base.json';a.click()};
 $('im').onclick=()=>$('fi').click();
 $('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());pairs=d.pairs||[];$('guide').value=d.guide||'';$('gloss').value=d.gloss||'';S('pairs',pairs);S('guide',$('guide').value);S('gloss',$('gloss').value);upd();toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
