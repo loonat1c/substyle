@@ -189,6 +189,7 @@ function capsSign(t){
 }
 const TG=/^\s*(\{[^}]*\}\s*)*/,dl=s=>s.replace(TG,'').startsWith('-');
 function prepText(t){
+ t=t.replace(/<i>/gi,'{\\i1}').replace(/<\/i>/gi,'{\\i0}');
  t=t.replace(/\\an8(?!\d)/g,'').replace(/\{\s*\}/g,'');
  t=t.replace(/\s*--(?=(?:\{[^}]*\})*(?:\\N|$))/g,'...');
  t=t.replace(/(^|\\N)(\s*(?:\{[^}]*\})*\s*)-(?=[^\s\d-])/g,'$1$2- ');
@@ -212,7 +213,7 @@ async function translate(){
   let res=null;
   for(let a=0;a<3&&!stop&&!res;a++){
    try{
-    const m={};(await ai([{role:'system',content:sp},{role:'user',content:user}])).split(/\r?\n/).forEach(l=>{const q=l.match(/^(\d+)\|(.*)$/);if(q)m[+q[1]]=q[2].trim().replace(/[«»]/g,'"')});
+    const m={};(await ai([{role:'system',content:sp},{role:'user',content:user}])).split(/\r?\n/).forEach(l=>{const q=l.match(/^(\d+)\|(.*)$/);if(q)m[+q[1]]=q[2].trim().replace(/[«»]/g,'"').replace(/<i>/gi,'{\\i1}').replace(/<\/i>/gi,'{\\i0}')});
     if(part.every((_,k)=>m[k+1]!=null)){res=m;lg(`кусок ${cn}/${ct}: готово, попытка ${a+1}`)}else toast(`кусок ${cn}/${ct}: не все строки вернулись, повтор…`);
    }catch(e){toast(`кусок ${cn}/${ct}: ошибка — ${e.message}`);await new Promise(r=>setTimeout(r,1500*(a+1)))}
   }
