@@ -212,6 +212,7 @@ function capsSign(t,nm){
 }
 const TG=/^\s*(\{[^}]*\}\s*)*/,dl=s=>s.replace(TG,'').startsWith('-');
 function prepText(t){
+ t=t.replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g,'');
  t=t.replace(/<i>/gi,'{\\i1}').replace(/<\/i>/gi,'{\\i0}');
  t=t.replace(/(^|\\N)(\s*(?:\{[^}]*\})*\s*)[–—‐‑−]/g,'$1$2-');
  t=t.replace(/\\an8(?!\d)/g,'').replace(/\{\s*\}/g,'');
