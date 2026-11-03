@@ -55,6 +55,10 @@ button:disabled{opacity:.5;transform:none;cursor:default}
 .le{display:flex;gap:12px;padding:6px 8px;border-radius:10px;font-size:13px;color:var(--text2)}
 .le span:first-child{color:var(--text3);font-variant-numeric:tabular-nums;flex-shrink:0}
 .le.bad{color:#ff8c8c;background:rgba(255,107,122,.08)}
+.seg{display:inline-flex;gap:3px;padding:4px;background:var(--glass);border:1px solid var(--line);border-radius:999px}
+.seg button{padding:6px 14px;font:500 13px var(--font-body);background:transparent;color:var(--text3);border:0;box-shadow:none;border-radius:999px}
+.seg button:hover{color:var(--text);transform:none;box-shadow:none}
+.seg button.on{background:var(--accent);color:var(--btn-text);font-weight:600;box-shadow:0 6px 16px -8px var(--accent)}
 .pb{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
 .pb select{width:auto;min-width:200px;max-width:100%;margin:0;border-radius:999px;padding:9px 18px}
 .pb .ib{margin-left:0;width:40px;height:40px}
@@ -68,7 +72,8 @@ button:disabled{opacity:.5;transform:none;cursor:default}
 .ib svg{width:20px;height:20px}
 .ib::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font:500 12.5px var(--font-body);color:var(--text2);white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .2s,transform .2s var(--ease);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
 .ib:hover::after{opacity:1;transform:none}
-#sdh.act{color:var(--accent2)!important}
+#sdh.act,#hist.act{color:var(--accent2)!important}
+#hist{margin-left:0}
 #src,#dst,#rin,#rout{min-height:clamp(420px,62vh,720px)}
 .ov{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .ov[hidden]{display:none}
@@ -97,7 +102,7 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <div><label>Исходник (ASS, англ.)</label><textarea id="src" placeholder="Dialogue: 0,0:53:03.12,0:53:05.59,Default,,0,0,0,,Let's go on a date."></textarea></div>
 <div><label>Перевод</label><textarea id="dst"></textarea></div></div>
 <div class="bar"><i id="bar"></i></div>
-<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="80" style="width:80px"><span id="pt" class="mu"></span><button class="sec ib" id="sdh" aria-pressed="false" aria-label="Убрать пометки для слабослышащих" data-tip="Убрать пометки для слабослышащих"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M17 10.2a2.2 2.2 0 1 0 0 3.6"/></svg></button></div></div></section>
+<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="100" style="width:80px"><span id="pt" class="mu"></span><button class="sec ib" id="sdh" aria-pressed="false" aria-label="Убрать пометки для слабослышащих" data-tip="Убрать пометки для слабослышащих"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M17 10.2a2.2 2.2 0 1 0 0 3.6"/></svg></button><button class="sec ib" id="hist" aria-pressed="false" aria-label="Историческая дорама" data-tip="Историческая дорама"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5c3.5 0 7-2.5 9.5-6 2.5 3.5 6 6 9.5 6"/><path d="M5 10.5V19M19 10.5V19M3.5 19h17M9 19v-5h6v5"/></svg></button></div></div></section>
 
 <section id="p_r" hidden><div class="card">
 <div class="pb"><select id="drama2"><option value="">— проект —</option></select><button class="sec ib" id="ld2" aria-label="Обновить список проектов из bfnames" data-tip="Обновить список проектов из bfnames"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button><details class="gl"><summary class="pill" id="gs2">Глоссарий · пусто</summary><textarea id="gloss2" placeholder="Глоссарий проекта (подставляется из bfnames, можно править)"></textarea></details></div>
@@ -106,12 +111,13 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <div><label>Результат</label><textarea id="rout"></textarea></div></div>
 <div class="row"><button id="rgo">Применить правила</button><button class="sec" id="rcp">Копировать</button><span id="rst" class="mu"></span></div>
 <div id="rdiff"></div></div></section>
-<section id="p_e" hidden><div class="card"><div class="cols">
+<section id="p_e" hidden><div class="card"><div class="row" style="margin:0 0 14px"><span class="mu">Профиль стиля:</span><div class="seg" id="pf1"><button data-p="r">Обычный</button><button data-p="h">Историческая</button></div><span class="mu">правки сохраняются в выбранный профиль</span></div><div class="cols">
 <div><label>Что отдал DeepSeek (подставляется автоматически)</label><textarea id="a"></textarea></div>
 <div><label>После правок в Aegisub</label><textarea id="b"></textarea></div></div>
 <div class="row"><button id="cmp">Сравнить и сохранить правки</button><span id="st" class="mu"></span></div><div id="diff"></div></div></section>
 
 <section id="p_s" hidden>
+<div class="row" style="margin:0 0 14px"><span class="mu">Профиль стиля:</span><div class="seg" id="pf2"><button data-p="r">Обычный</button><button data-p="h">Историческая</button></div><span class="mu">гайд и база правок ведутся отдельно для каждого профиля</span></div>
 <div class="card"><h2>Стартовые образцы стиля</h2><p class="mu" style="margin:-6px 0 14px">Вставь свои готовые переводы (ASS). Оригинал слева — по желанию, так точнее. Из образцов соберётся гайд по стилю.</p>
 <div class="cols"><div><label>Оригинал, англ. (необязательно)</label><textarea id="sen" style="min-height:180px"></textarea></div><div><label>Твой готовый перевод</label><textarea id="sru" style="min-height:180px"></textarea></div></div>
 <div class="row"><button id="sg">Создать гайд по образцам</button><span class="mu">до 800 строк за раз, повторный запуск дополняет гайд</span></div></div>
@@ -127,7 +133,7 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <label>Автообновление гайда после N новых правок (0 — только вручную)</label><input id="c_auto" type="number" min="0" value="1000"></div></section>
 </div>
 <div class="lg" id="lg" hidden></div>
-<div class="ov" id="md" hidden><div class="md"><h2>Включено удаление пометок</h2><p>Кнопка «Убрать пометки для слабослышащих» нажата: строки вроде (вздыхает) и имена говорящих будут удалены из перевода. Так и должно быть?</p><div class="row"><button class="sec" id="md_off">Отключить</button><button id="md_go">Да, переводить</button></div></div></div>
+<div class="ov" id="md" hidden><div class="md"><h2 id="md_t">Включён особый режим</h2><p id="md_p"></p><div class="row"><button class="sec" id="md_off">Отключить</button><button id="md_go">Да, переводить</button></div></div></div>
 <script>
 const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const L=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -137,7 +143,14 @@ const toast=t=>{$('toast').textContent=t;lg(t)};
 function renderLog(){$('lg').innerHTML=logs.length?logs.map(([ts,t])=>{const d=new Date(ts);return `<div class="le${/ошибк|не все|не перев/.test(t)?' bad':''}"><span>${z2(d.getHours())}:${z2(d.getMinutes())}:${z2(d.getSeconds())}</span><span>${esc(t)}</span></div>`}).join(''):'<div class="le"><span></span><span>Лог пуст</span></div>'}
 $('toast').onclick=e=>{e.stopPropagation();const l=$('lg');l.hidden=!l.hidden;if(!l.hidden)renderLog()};
 document.addEventListener('click',e=>{if(!$('lg').contains(e.target))$('lg').hidden=true});
-let pairs=L('pairs',[]),stop=false,dramas={};
+let prof=L('prof','r'),pairs=L(L('prof','r')==='h'?'pairs_h':'pairs',[]),stop=false,dramas={};
+const PK=p=>p==='h'?'pairs_h':'pairs',GK=p=>p==='h'?'guide_h':'guide',SK=p=>p==='h'?'since_h':'since';
+const gp=p=>p===prof?pairs:L(PK(p),[]),gg=p=>p===prof?$('guide').value:L(GK(p),'');
+function setProf(p){
+ prof=p;S('prof',p);pairs=L(PK(p),[]);$('guide').value=L(GK(p),'');
+ ['pf1','pf2'].forEach(id=>[...$(id).children].filter(b=>b.dataset&&b.dataset.p).forEach(b=>b.classList.toggle('on',b.dataset.p===p)));
+ upd();
+}
 const ASS=/^(\s*Dialogue:\s*[^,]*,([^,]*),[^,]*,(?:[^,]*,){6})(.*)$/;
 function parse(t){const seen={};return t.split(/\r?\n/).filter(l=>l.trim()).map((l,i)=>{const m=l.match(ASS);if(!m)return{pre:'',text:l.trim(),key:'i'+i};const s=m[2].trim();seen[s]=(seen[s]||0)+1;return{pre:m[1],text:m[3].trim(),key:s+'#'+seen[s]}})}
 
@@ -181,7 +194,7 @@ $('cost').onclick=()=>{S('use',{c:0});showUse()};
 // --- Перевод
 function sys(){
  const ex=pairs.filter(p=>norm(p.before)!==norm(p.after)).slice(-20).map(p=>`БЫЛО: ${p.before}\nСТАЛО: ${p.after}`).join('\n\n');
- return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.${sdhOn()?'\n\nУбирай технические пометки для слабослышащих: звуки и действия в скобках, например (вздыхает), (кричит), (музыка), и имена говорящих перед репликой, например «ДЖОН:». Если после удаления в строке ничего не осталось, верни только «номер|» с пустым текстом. Диалоговые дефисы «- » сохраняй.':''}
+ return `Ты переводчик субтитров дорам с английского на русский. Получаешь строки «номер|текст». Верни ТОЛЬКО строки «номер|перевод» — столько же, в том же порядке, без пояснений. Сохраняй теги {…} и переносы \\N. Не объединяй и не пропускай строки.${sdhOn()?'\n\nУбирай технические пометки для слабослышащих: звуки и действия в скобках, например (вздыхает), (кричит), (музыка), и имена говорящих перед репликой, например «ДЖОН:». Если после удаления в строке ничего не осталось, верни только «номер|» с пустым текстом. Диалоговые дефисы «- » сохраняй.':''}${histOn()?'\n\nЭто историческая дорама (сагык). Переводи в архаичном, возвышенном стиле: «ваше величество», «государь», «государыня», «ваше высочество», «господин», «госпожа»; формулы «Повинуюсь», «Слушаюсь», «Да будет так», «Смилуйтесь», «Не смею»; о себе — «ничтожный», «ваш слуга». Подчинённые и младшие обращаются на «вы». Никакого современного сленга, англицизмов и разговорных оборотов; книжные слова («дозвольте», «сей», «посему», «дабы») — умеренно, читаемость важнее. Должности и титулы передавай русскими историческими эквивалентами. Гайд по стилю ниже уточняет эти указания: при расхождении следуй гайду. Примеры правок ниже взяты из этого же стиля.':''}
 
 СТИЛЬ:
 ${$('guide').value.trim()||'(нет)'}
@@ -191,8 +204,8 @@ ${ex||'(нет)'}
 
 ПРОЕКТ (имена, термины, обращения — писать строго так):
 ${$('gloss').value.trim()||'(нет)'}`}
-const sdhOn=()=>$('sdh').classList.contains('act');
-const ask=()=>new Promise(r=>{const m=$('md');m.hidden=false;$('md_off').onclick=()=>{m.hidden=true;r('off')};$('md_go').onclick=()=>{m.hidden=true;r('go')}});
+const sdhOn=()=>$('sdh').classList.contains('act'),histOn=()=>$('hist').classList.contains('act');
+const ask=list=>new Promise(r=>{const m=$('md');$('md_t').textContent=list.length>1?'Включены особые режимы':'Включён особый режим';$('md_p').innerHTML=list.map(([n,d])=>`<b>${n}</b> — ${d}`).join('<br><br>')+'<br><br>Так и должно быть?';m.hidden=false;$('md_off').onclick=()=>{m.hidden=true;r('off')};$('md_go').onclick=()=>{m.hidden=true;r('go')}});
 const EL=/\s*(\.{3}|…)(?=(?:[«»\"”’)\s]|\{[^}]*\})*$)/,ES=/^((?:\{[^}]*\}\s*)*[«\"“(\s-]*)(\.{3}|…)\s*/;
 function joinEllipsis(a){for(let i=0;i<a.length-1;i++)if(EL.test(a[i].text)&&ES.test(a[i+1].text)){a[i].text=a[i].text.replace(EL,'');a[i+1].text=a[i+1].text.replace(ES,'$1')}}
 const ACR=/^(FBI|CIA|NIS|USA|UN|TV|CCTV|DNA|VIP|ICU|ER|CEO|PD|PC|ID|SOS|OK|DJ|KTX|SUV|VR|AI|DMZ|NASA|UFO|ФБР|ЦРУ|КГБ|ДНК|ТВ)$/;
@@ -224,13 +237,14 @@ function prepText(t){
 }
 async function translate(){
  const raw=parse($('src').value);if(!raw.length)return toast('вставь текст');
- if(sdhOn()&&await ask()==='off'){$('sdh').classList.remove('act');$('sdh').setAttribute('aria-pressed',false);S('sdh',false);return toast('кнопка отключена — запусти перевод ещё раз')}
- const sdh=sdhOn();logs.length=0;lg('старт: '+raw.length+' строк');
+ const modes=[...(sdhOn()?[['Убрать пометки для слабослышащих','из перевода удаляются (вздыхает), (музыка) и имена говорящих']]:[]),...(histOn()?[['Историческая дорама','перевод в архаичном стиле: «ваше величество», «государь», без современного сленга']]:[])];
+ if(modes.length&&await ask(modes)==='off'){['sdh','hist'].forEach(k=>{$(k).classList.remove('act');$(k).setAttribute('aria-pressed',false);S(k,false)});return toast('режимы отключены — запусти перевод ещё раз')}
+ const sdh=sdhOn();setProf(histOn()?'h':'r');logs.length=0;lg('старт: '+raw.length+' строк'+(modes.length?' · режимы: '+modes.map(x=>x[0]).join(', '):''));
  let items=raw.map(x=>({...x,text:prepText(x.text)}));joinEllipsis(items);items.forEach(x=>{x.cue=/^\(.*\)$/.test(x.text.replace(TG,'').trim());x.text=capsSign(x.text)});
  toast('подготовка: исправлено строк — '+items.filter((x,i)=>x.text!==raw[i].text).length);
  $('src').value=items.map(x=>x.pre+x.text).join('\n');
  if(sdh)items=items.filter(x=>!x.cue);
- const N=+$('chunk').value||80,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
+ const N=+$('chunk').value||100,out=[],sp=sys();stop=false;$('go').disabled=true;$('dst').value='';
  for(let i=0;i<items.length&&!stop;i+=N){
   const part=items.slice(i,i+N),cs=Math.max(0,i-6),cn=Math.round(i/N)+1,ct=Math.ceil(items.length/N);
   const ctx=items.slice(cs,i).map((x,k)=>x.text+' => '+out[cs+k]).join('\n');
@@ -260,10 +274,10 @@ async function cmp(){
  o.forEach((x,i)=>{const y=(x.key[0]!=='i'&&em.get(x.key))||e[i];if(!y)return;x.text===y.text?same++:ch.push([x.text,y.text])});
  const seen=new Set(pairs.map(p=>p.before+'\u0001'+p.after));let add=0;
  ch.forEach(([b,a])=>{const k=b+'\u0001'+a;if(!seen.has(k)){pairs.push({before:b,after:a});seen.add(k);add++}});
- S('pairs',pairs);S('since',L('since',0)+add);upd();
+ S(PK(prof),pairs);S(SK(prof),L(SK(prof),0)+add);upd();
  $('st').textContent=`без изменений: ${same}, изменено: ${ch.length}, новых в базу: ${add}`;
  $('diff').innerHTML=ch.length?'<table><tr><th>DeepSeek</th><th>Твой вариант</th></tr>'+ch.map(([b,a])=>{const[l,r]=wd(b,a);return`<tr><td>${l}</td><td>${r}</td></tr>`}).join('')+'</table>':'';
- if(+$('c_auto').value>0&&L('since',0)>=+$('c_auto').value){toast('копится стиль, анализирую…');analyze()}
+ if(+$('c_auto').value>0&&L(SK(prof),0)>=+$('c_auto').value){toast('копится стиль, анализирую…');analyze()}
 }
 
 // --- Анализ стиля
@@ -277,8 +291,8 @@ async function analyze(){
  if(!pairs.length)return toast('база пуста');
  const list=pick(150).map((p,i)=>`${i+1}. БЫЛО: ${p.before}\n   СТАЛО: ${p.after}`).join('\n'),old=$('guide').value.trim();
  try{
-  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи гайд из двух разделов. СТИЛЬ: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия. ЧАСТЫЕ ОШИБКИ МОДЕЛИ: повторяющиеся исправления (род и согласование, пунктуация, термины) — сформулируй как конкретные правила, чтобы переводчик их не допускал. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
-  $('guide').value=t.trim();S('guide',t.trim());S('since',0);upd();toast('гайд обновлён');
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров ${prof==='h'?'исторических дорам (сагык)':'дорам'} (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи гайд из двух разделов. СТИЛЬ: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия. ЧАСТЫЕ ОШИБКИ МОДЕЛИ: повторяющиеся исправления (род и согласование, пунктуация, термины) — сформулируй как конкретные правила, чтобы переводчик их не допускал. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  $('guide').value=t.trim();S(GK(prof),t.trim());S(SK(prof),0);upd();toast('гайд обновлён');
  }catch(e){toast('ошибка: '+e.message)}
 }
 async function sampleGuide(){
@@ -294,8 +308,8 @@ async function sampleGuide(){
  const old=$('guide').value.trim();
  toast('анализирую образцы…');
  try{
-  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров дорам (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
-  $('guide').value=t.trim();S('guide',t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');
+  const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров ${prof==='h'?'исторических дорам (сагык)':'дорам'} (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
+  $('guide').value=t.trim();S(GK(prof),t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');
  }catch(e){toast('ошибка: '+e.message)}
 }
 const lev=(a,b)=>{const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]};
@@ -333,7 +347,7 @@ function editRu(){
  $('rdiff').innerHTML=(rk.length?`<p class="mu" style="margin:14px 0 0">Имена: ${esc(rk.map(([k,v])=>k+' ('+v+')').join(', '))}</p>`:'')+(ch.length?'<table><tr><th>Было</th><th>Стало</th></tr>'+ch.slice(0,200).map(([a,b])=>{const[l,r]=wd(a,b);return`<tr><td>${l}</td><td>${r}</td></tr>`}).join('')+'</table>'+(ch.length>200?'<p class="mu">показаны первые 200 изменений</p>':''):'');
  toast(`редактор: изменено ${ch.length} из ${items.length}`);
 }
-function upd(){$('pc').textContent=`в базе правок: ${pairs.length}, новых с прошлого анализа: ${L('since',0)} · автообновление: ${+$('c_auto').value>0?'при '+$('c_auto').value:'выкл.'}`}
+function upd(){$('pc').textContent=`${prof==='h'?'историческая':'обычный'} профиль · в базе правок: ${pairs.length}, новых с прошлого анализа: ${L(SK(prof),0)} · автообновление: ${+$('c_auto').value>0?'при '+$('c_auto').value:'выкл.'}`}
 
 // --- bfnames
 async function loadD(){
@@ -354,13 +368,16 @@ $('go').onclick=translate;$('stopb').onclick=()=>stop=true;
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('dst').value);toast('скопировано')}catch(e){$('dst').select()}};
 $('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;$('sg').onclick=sampleGuide;$('rgo').onclick=editRu;$('rcp').onclick=async()=>{try{await navigator.clipboard.writeText($('rout').value);toast('скопировано')}catch(e){$('rout').select()}};
 
-$('guide').oninput=()=>S('guide',$('guide').value);
+$('guide').oninput=()=>S(GK(prof),$('guide').value);
 ['worker','token','model','db','pin','auto'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
-$('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({pairs,guide:$('guide').value,gloss:$('gloss').value},null,1)],{type:'application/json'}));a.download='substyle-base.json';a.click()};
+$('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:2,r:{pairs:gp('r'),guide:gg('r')},h:{pairs:gp('h'),guide:gg('h')},gloss:$('gloss').value},null,1)],{type:'application/json'}));a.download='substyle-base.json';a.click()};
 $('im').onclick=()=>$('fi').click();
-$('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());pairs=d.pairs||[];$('guide').value=d.guide||'';$('gloss').value=d.gloss||'';S('pairs',pairs);S('guide',$('guide').value);S('gloss',$('gloss').value);upd();toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
-$('clr').onclick=()=>{if(confirm('Очистить базу правок?')){pairs=[];S('pairs',[]);S('since',0);upd()}};
-$('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');$('sdh').classList.toggle('act',!!L('sdh',false));$('sdh').onclick=()=>{const v=!sdhOn();$('sdh').classList.toggle('act',v);$('sdh').setAttribute('aria-pressed',v);S('sdh',v)};showUse();upd();
+$('fi').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text()),r=d.v===2?d.r:{pairs:d.pairs,guide:d.guide},h=d.v===2?d.h:null;S(PK('r'),r.pairs||[]);S(GK('r'),r.guide||'');if(h){S(PK('h'),h.pairs||[]);S(GK('h'),h.guide||'')}if(d.gloss){$('gloss').value=d.gloss;S('gloss',d.gloss)}setProf(prof);toast('импортировано')}catch(x){toast('не удалось прочитать файл')}};
+$('clr').onclick=()=>{if(confirm('Очистить базу правок профиля «'+(prof==='h'?'историческая':'обычный')+'»?')){pairs=[];S(PK(prof),[]);S(SK(prof),0);upd()}};
+$('guide').value=L('guide','');$('gloss').value=L('gloss','');$('a').value=L('last','');$('sdh').classList.toggle('act',!!L('sdh',false));$('sdh').onclick=()=>{const v=!sdhOn();$('sdh').classList.toggle('act',v);$('sdh').setAttribute('aria-pressed',v);S('sdh',v)};
+$('hist').classList.toggle('act',!!L('hist',false));$('hist').onclick=()=>{const v=!histOn();$('hist').classList.toggle('act',v);$('hist').setAttribute('aria-pressed',v);S('hist',v)};showUse();upd();
+[['pf1'],['pf2']].forEach(([i])=>$(i).onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.p)setProf(b.dataset.p)});
+setProf(prof);
 dramas=L('dramas',{});
 function fillDramas(){
  const o='<option value="">— проект —</option>'+Object.entries(dramas).sort((x,y)=>(x[1].name||'').localeCompare(y[1].name||'','ru')).map(([id,d])=>`<option value="${esc(id)}">${esc(d.name||id)}</option>`).join('');
