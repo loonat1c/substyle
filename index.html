@@ -62,13 +62,12 @@ button:disabled{opacity:.5;transform:none;cursor:default}
 .pb{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
 .pb select{width:auto;min-width:200px;max-width:100%;margin:0;border-radius:999px;padding:9px 18px}
 .pb .ib{margin-left:0;width:40px;height:40px}
-.pb .ib::after{right:auto;left:0}
 .gl summary{list-style:none;cursor:pointer;user-select:none;display:inline-block;transition:border-color .2s,color .2s}
 .gl summary::-webkit-details-marker{display:none}
 .gl summary:hover{color:var(--text);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .gl[open]{flex:1 1 100%}
 .gl textarea{min-height:130px;margin:10px 0 0}
-.ib{width:42px;height:42px;padding:0;display:inline-grid;place-items:center;position:relative;margin-left:auto}
+.ib{width:42px;height:42px;padding:0;display:inline-grid;place-items:center;position:relative}
 .ib svg{width:20px;height:20px}
 .ib::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font:500 12.5px var(--font-body);color:var(--text2);white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .2s,transform .2s var(--ease);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
 .ib:hover::after{opacity:1;transform:none}
@@ -90,6 +89,16 @@ td:last-child{border-right-width:1px;border-radius:0 var(--r-md) var(--r-md) 0}
 del{background:rgba(255,107,122,.25);text-decoration:none;border-radius:4px}
 ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 @media(max-width:800px){.cols{grid-template-columns:1fr}header{min-height:60px;padding:8px .85rem}.w{padding:16px .85rem 40px}nav button{padding:9px 14px;font-size:13px}}
+.tb{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 14px;margin-top:10px}
+.g{display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-width:0}
+.g input{margin:0}
+.st{flex:1 1 100%;min-width:0;color:var(--text3);font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.st:empty{display:none}
+td,th{overflow-wrap:anywhere}
+.ib::after,.tm::after{display:none;width:max-content;max-width:min(300px,calc(100vw - 32px));white-space:normal}
+.ib:hover::after,.tm:hover::after{display:block;animation:tipIn .18s var(--ease)}
+@keyframes tipIn{from{opacity:0}}
+@media(max-width:560px){.g{width:100%}.g>button:not(.ib){flex:1 1 150px;white-space:normal;line-height:1.25}.tb{gap:12px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head><body>
 <header><h1>SubStyle</h1><span class="pill" id="cost" title="Клик — сбросить"></span><span class="pill tm" id="tm"><i class="dot"></i><span id="tml"></span><b id="tmt"></b></span><span class="sp"></span><span class="pill" id="toast" title="Клик — лог статусов">готов</span></header>
@@ -102,27 +111,27 @@ ins{background:rgba(61,214,140,.22);text-decoration:none;border-radius:4px}
 <div><label>Исходник (ASS, англ.)</label><textarea id="src" placeholder="Dialogue: 0,0:53:03.12,0:53:05.59,Default,,0,0,0,,Let's go on a date."></textarea></div>
 <div><label>Перевод</label><textarea id="dst"></textarea></div></div>
 <div class="bar"><i id="bar"></i></div>
-<div class="row"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="100" style="width:80px"><span id="pt" class="mu"></span><button class="sec ib" id="sdh" aria-pressed="false" aria-label="Убрать пометки для слабослышащих" data-tip="Убрать пометки для слабослышащих"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M17 10.2a2.2 2.2 0 1 0 0 3.6"/></svg></button><button class="sec ib" id="hist" aria-pressed="false" aria-label="Историческая дорама" data-tip="Историческая дорама"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5c3.5 0 7-2.5 9.5-6 2.5 3.5 6 6 9.5 6"/><path d="M5 10.5V19M19 10.5V19M3.5 19h17M9 19v-5h6v5"/></svg></button></div></div></section>
+<div class="tb"><div class="g"><button id="go">Перевести</button><button class="sec" id="stopb">Стоп</button><button class="sec" id="cp">Копировать</button></div><div class="g"><span class="mu">Кусок, реплик:</span><input id="chunk" type="number" value="100" style="width:80px"><button class="sec ib" id="sdh" aria-pressed="false" aria-label="Убрать пометки для слабослышащих" data-tip="Убрать пометки для слабослышащих"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M17 10.2a2.2 2.2 0 1 0 0 3.6"/></svg></button><button class="sec ib" id="hist" aria-pressed="false" aria-label="Историческая дорама" data-tip="Историческая дорама"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5c3.5 0 7-2.5 9.5-6 2.5 3.5 6 6 9.5 6"/><path d="M5 10.5V19M19 10.5V19M3.5 19h17M9 19v-5h6v5"/></svg></button></div><div class="st" id="pt"></div></div></div></section>
 
 <section id="p_r" hidden><div class="card">
 <div class="pb"><select id="drama2"><option value="">— проект —</option></select><button class="sec ib" id="ld2" aria-label="Обновить список проектов из bfnames" data-tip="Обновить список проектов из bfnames"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button><details class="gl"><summary class="pill" id="gs2">Глоссарий · пусто</summary><textarea id="gloss2" placeholder="Глоссарий проекта (подставляется из bfnames, можно править)"></textarea></details></div>
 <div class="cols">
 <div><label>Русские субтитры (ASS)</label><textarea id="rin" placeholder="Dialogue: 0,0:53:03.12,0:53:05.59,Default,,0,0,0,,Пойдём на свидание."></textarea></div>
 <div><label>Результат</label><textarea id="rout"></textarea></div></div>
-<div class="row"><button id="rgo">Применить правила</button><button class="sec" id="rcp">Копировать</button><span id="rst" class="mu"></span></div>
+<div class="tb"><div class="g"><button id="rgo">Применить правила</button><button class="sec" id="rcp">Копировать</button></div><div class="st" id="rst"></div></div>
 <div id="rdiff"></div></div></section>
 <section id="p_e" hidden><div class="card"><div class="row" style="margin:0 0 14px"><span class="mu">Профиль стиля:</span><div class="seg" id="pf1"><button data-p="r">Обычный</button><button data-p="h">Историческая</button></div><span class="mu">правки сохраняются в выбранный профиль</span></div><div class="cols">
 <div><label>Что отдал DeepSeek (подставляется автоматически)</label><textarea id="a"></textarea></div>
 <div><label>После правок в Aegisub</label><textarea id="b"></textarea></div></div>
-<div class="row"><button id="cmp">Сравнить и сохранить правки</button><span id="st" class="mu"></span></div><div id="diff"></div></div></section>
+<div class="tb"><div class="g"><button id="cmp">Сравнить и сохранить правки</button></div><div class="st" id="st"></div></div><div id="diff"></div></div></section>
 
 <section id="p_s" hidden>
 <div class="row" style="margin:0 0 14px"><span class="mu">Профиль стиля:</span><div class="seg" id="pf2"><button data-p="r">Обычный</button><button data-p="h">Историческая</button></div><span class="mu">гайд и база правок ведутся отдельно для каждого профиля</span></div>
 <div class="card"><h2>Стартовые образцы стиля</h2><p class="mu" style="margin:-6px 0 14px">Вставь свои готовые переводы (ASS). Оригинал слева — по желанию, так точнее. Из образцов соберётся гайд по стилю.</p>
 <div class="cols"><div><label>Оригинал, англ. (необязательно)</label><textarea id="sen" style="min-height:180px"></textarea></div><div><label>Твой готовый перевод</label><textarea id="sru" style="min-height:180px"></textarea></div></div>
-<div class="row"><button id="sg">Создать гайд по образцам</button><span class="mu">до 800 строк за раз, повторный запуск дополняет гайд</span></div></div>
-<div class="card"><h2>Гайд по стилю</h2><textarea id="guide" style="min-height:240px;font-family:inherit"></textarea>
-<div class="row"><button id="an">Обновить гайд по правкам</button><span id="pc" class="mu"></span><span class="sp"></span><button class="sec" id="ex">Экспорт</button><button class="sec" id="im">Импорт</button><button class="sec" id="clr">Очистить базу</button></div><input type="file" id="fi" hidden></div></section>
+<div class="tb"><div class="g"><button id="sg">Создать гайд по образцам</button></div><div class="st">до 800 строк за раз; повторный запуск дополняет гайд выбранного профиля</div></div></div>
+<div class="card"><div class="tb" style="margin:0 0 12px"><h2 style="margin:0">Гайд по стилю</h2><span class="pill" id="gw"></span></div><textarea id="guide" style="min-height:240px;font-family:inherit"></textarea>
+<div class="tb"><div class="g"><button id="an">Обновить по правкам</button><button class="sec" id="gc">Сжать гайд</button><button class="sec" id="gu">Вернуть прошлую версию</button></div><div class="g"><button class="sec" id="ex">Экспорт</button><button class="sec" id="im">Импорт</button><button class="sec" id="clr">Очистить базу</button></div><div class="st" id="pc"></div></div><input type="file" id="fi" hidden></div></section>
 
 <section id="p_c" hidden><div class="card"><h2>Подключение</h2>
 <label>URL Cloudflare Worker</label><input id="c_worker" placeholder="https://name.account.workers.dev">
@@ -149,7 +158,7 @@ const gp=p=>p===prof?pairs:L(PK(p),[]),gg=p=>p===prof?$('guide').value:L(GK(p),'
 function setProf(p){
  prof=p;S('prof',p);pairs=L(PK(p),[]);$('guide').value=L(GK(p),'');
  ['pf1','pf2'].forEach(id=>[...$(id).children].filter(b=>b.dataset&&b.dataset.p).forEach(b=>b.classList.toggle('on',b.dataset.p===p)));
- upd();
+ upd();gwc();
 }
 const ASS=/^(\s*Dialogue:\s*[^,]*,([^,]*),[^,]*,(?:[^,]*,){6})(.*)$/;
 function parse(t){const seen={};return t.split(/\r?\n/).filter(l=>l.trim()).map((l,i)=>{const m=l.match(ASS);if(!m)return{pre:'',text:l.trim(),key:'i'+i};const s=m[2].trim();seen[s]=(seen[s]||0)+1;return{pre:m[1],text:m[3].trim(),key:s+'#'+seen[s]}})}
@@ -281,6 +290,19 @@ async function cmp(){
 }
 
 // --- Анализ стиля
+const wc=t=>(t.trim().match(/\S+/g)||[]).length,PV=p=>GK(p)+'_prev';
+function gwc(){const n=wc($('guide').value),e=$('gw'),bad=n>900;e.textContent='≈ '+n+' слов';e.style.color=bad?'#ff8c8c':'';e.style.borderColor=bad?'#ff8c8c66':'';$('gu').disabled=!L(PV(prof),'')}
+function setGuide(t){const cur=$('guide').value;if(cur.trim()&&cur.trim()!==t.trim())S(PV(prof),cur);$('guide').value=t;S(GK(prof),t);gwc()}
+function undoGuide(){const prev=L(PV(prof),'');if(!prev)return toast('прошлой версии нет');const cur=$('guide').value;$('guide').value=prev;S(GK(prof),prev);S(PV(prof),cur);gwc();toast('вернул прошлую версию (повторный клик вернёт обратно)')}
+async function compressGuide(auto){
+ const g=$('guide').value.trim();if(!g)return toast('гайд пуст');
+ toast(auto?'гайд длинный — сжимаю…':'сжимаю гайд…');
+ try{
+  const t=(await ai([{role:'user',content:`Сократи гайд по стилю перевода субтитров до 600–700 слов. Сохрани все существенные правила и по одному короткому примеру к каждому; объедини повторы и похожие пункты; убери частности отдельных дорам (имена героев, названия компаний, конкретные реплики). Структуру (разделы СТИЛЬ и ЧАСТЫЕ ОШИБКИ МОДЕЛИ, если они есть) сохрани. Выведи только сжатый гайд.\n\nГайд:\n${g}`}])).trim();
+  if(wc(t)<80||wc(t)>=wc(g))return toast('сжатие не помогло, гайд оставлен как есть');
+  setGuide(t);toast(`гайд сжат: ${wc(g)} → ${wc(t)} слов`);
+ }catch(e){toast('ошибка: '+e.message)}
+}
 const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 function pick(n){
  const rec=pairs.slice(-800),sub=rec.filter(p=>norm(p.before)!==norm(p.after)),pun=rec.filter(p=>norm(p.before)===norm(p.after));
@@ -292,7 +314,7 @@ async function analyze(){
  const list=pick(150).map((p,i)=>`${i+1}. БЫЛО: ${p.before}\n   СТАЛО: ${p.after}`).join('\n'),old=$('guide').value.trim();
  try{
   const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров ${prof==='h'?'исторических дорам (сагык)':'дорам'} (EN→RU). Ниже пары «БЫЛО» (машинный перевод) и «СТАЛО» (правка живого переводчика). Выведи гайд из двух разделов. СТИЛЬ: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия. ЧАСТЫЕ ОШИБКИ МОДЕЛИ: повторяющиеся исправления (род и согласование, пунктуация, термины) — сформулируй как конкретные правила, чтобы переводчик их не допускал. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, поправь спорное, добавь новое):\n'+old+'\n\n':''}Пары:\n${list}\n\nВыведи только компактный гайд для системного промпта.`}]);
-  $('guide').value=t.trim();S(GK(prof),t.trim());S(SK(prof),0);upd();toast('гайд обновлён');
+  if(wc(t)<80)return toast('анализ вернул слишком короткий ответ, гайд не изменён');setGuide(t.trim());S(SK(prof),0);upd();toast('гайд обновлён');if(wc(t)>900)await compressGuide(true);
  }catch(e){toast('ошибка: '+e.message)}
 }
 async function sampleGuide(){
@@ -309,7 +331,7 @@ async function sampleGuide(){
  toast('анализирую образцы…');
  try{
   const t=await ai([{role:'user',content:`Ты аналитик стиля перевода субтитров ${prof==='h'?'исторических дорам (сагык)':'дорам'} (EN→RU). Ниже готовые переводы живого переводчика${A.length?' вместе с оригиналом':''}. Выведи устойчивые правила его стиля: регистр и обращения, лексика и сленг, длина и ритм реплик, порядок слов, шутки и междометия, пунктуация, имена и титулы. К правилам — 1–2 коротких примера из данных. Не выдумывай правил, которых нет в данных. Уложись в 600–800 слов: объединяй похожие правила, не дублируй. Не включай частности отдельных дорам — имена героев, названия компаний и проектов, конкретные реплики: только то, что может встретиться в других проектах. Примеры — короткие и нейтральные. Если текущий гайд длиннее или содержит такие частности, сократи его.\n\n${old?'Текущий гайд (обнови: сохрани верное, добавь новое):\n'+old+'\n\n':''}Образцы:\n${rows.join('\n')}\n\nВыведи только компактный гайд для системного промпта.`}]);
-  $('guide').value=t.trim();S(GK(prof),t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');
+  if(wc(t)<80)return toast('ответ слишком короткий, гайд не изменён');setGuide(t.trim());toast('гайд создан по образцам ('+rows.length+' строк)');if(wc(t)>900)await compressGuide(true);
  }catch(e){toast('ошибка: '+e.message)}
 }
 const lev=(a,b)=>{const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]};
@@ -366,9 +388,9 @@ function gl(d){const ch=Object.fromEntries(Object.entries(d.chars||{}).map(([k,v
 $('nav').onclick=e=>{const p=e.target.dataset.p;if(!p)return;[...$('nav').children].forEach(b=>b.classList.toggle('on',b===e.target));['t','e','s','c','r'].forEach(k=>$('p_'+k).hidden=k!==p)};
 $('go').onclick=translate;$('stopb').onclick=()=>stop=true;
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('dst').value);toast('скопировано')}catch(e){$('dst').select()}};
-$('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;$('sg').onclick=sampleGuide;$('rgo').onclick=editRu;$('rcp').onclick=async()=>{try{await navigator.clipboard.writeText($('rout').value);toast('скопировано')}catch(e){$('rout').select()}};
+$('cmp').onclick=cmp;$('an').onclick=analyze;$('ld').onclick=loadD;$('sg').onclick=sampleGuide;$('gc').onclick=()=>compressGuide(false);$('gu').onclick=undoGuide;$('rgo').onclick=editRu;$('rcp').onclick=async()=>{try{await navigator.clipboard.writeText($('rout').value);toast('скопировано')}catch(e){$('rout').select()}};
 
-$('guide').oninput=()=>S(GK(prof),$('guide').value);
+$('guide').oninput=()=>{S(GK(prof),$('guide').value);gwc()};
 ['worker','token','model','db','pin','auto'].forEach(k=>{const el=$('c_'+k);el.value=L('c_'+k,el.value);el.oninput=()=>S('c_'+k,el.value)});
 $('ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:2,r:{pairs:gp('r'),guide:gg('r')},h:{pairs:gp('h'),guide:gg('h')},gloss:$('gloss').value},null,1)],{type:'application/json'}));a.download='substyle-base.json';a.click()};
 $('im').onclick=()=>$('fi').click();
